@@ -1,0 +1,101 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "Auto Loop Remote",
+   LoadingTitle = "Loading Script...",
+   LoadingSubtitle = "by Gemini",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = "AutoLoopConfig",
+      FileName = "RemoteLoop"
+   }
+})
+
+local Tab = Window:CreateTab("Main Loop", 4483362458) -- Icon ID
+
+-- State Variables
+local loop1Active = false
+local loop2Active = false
+local delay1 = 0.5
+local delay2 = 0.5
+
+-- Services & Remote Path
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remote = ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("Networking"):WaitForChild("Warp"):WaitForChild("Index"):WaitForChild("Event"):WaitForChild("Reliable")
+
+-- ================= REMOTE 1 SECTION =================
+Tab:CreateSection("Remote 1 (-)")
+
+Tab:CreateToggle({
+   Name = "Auto Loop Remote 1",
+   CurrentValue = false,
+   Callback = function(Value)
+      loop1Active = Value
+      if Value then
+         task.spawn(function()
+            while loop1Active do
+               local args = {
+                  buffer.fromstring("-"),
+                  buffer.fromstring("\254\001\000\001\002")
+               }
+               Remote:FireServer(unpack(args))
+               task.wait(delay1)
+            end
+         end)
+      end
+   end,
+})
+
+Tab:CreateSlider({
+   Name = "Delay Remote 1 (Detik)",
+   Min = 0.1,
+   Max = 5,
+   Increment = 0.1,
+   Suffix = "s",
+   CurrentValue = 0.5,
+   Callback = function(Value)
+      delay1 = Value
+   end,
+})
+
+-- ================= REMOTE 2 SECTION =================
+Tab:CreateSection("Remote 2 (.)")
+
+Tab:CreateToggle({
+   Name = "Auto Loop Remote 2",
+   CurrentValue = false,
+   Callback = function(Value)
+      loop2Active = Value
+      if Value then
+         task.spawn(function()
+            while loop2Active do
+               local args = {
+                  buffer.fromstring("."),
+                  buffer.fromstring("\254\000\000")
+               }
+               Remote:FireServer(unpack(args))
+               task.wait(delay2)
+            end
+         end)
+      end
+   end,
+})
+
+Tab:CreateSlider({
+   Name = "Delay Remote 2 (Detik)",
+   Min = 0.1,
+   Max = 5,
+   Increment = 0.1,
+   Suffix = "s",
+   CurrentValue = 0.5,
+   Callback = function(Value)
+      delay2 = Value
+   end,
+})
+
+Rayfield:Notify({
+   Title = "Script Ready!",
+   Content = "Silahkan aktifkan toggle untuk memulai loop.",
+   Duration = 5,
+   Image = 4483362458,
+})
